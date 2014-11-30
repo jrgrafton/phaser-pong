@@ -65,6 +65,6 @@ PhaserPong.Preloader.prototype = {
     // start the MainMenu state
     document.body.classList.add("ready");
     //this.state.start('MainMenu');
-    this.state.start('Game');
+    this.state.start('MainMenu');
   }
 };

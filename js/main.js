@@ -1,15 +1,22 @@
 window.addEventListener('load',function() {
-  var DEBUG = true;
+  window.DEBUG = false;
 
   // Turn off logging when not in debugging
-  if(!DEBUG) {
+  if(!window.DEBUG) {
     console.log = function() {}
     console.debug = function() {}
     console.info = function() {}
   }
 
   // initialize the framework
-  var game = new Phaser.Game(1280, 768, Phaser.AUTO, 'game');
+  var game = new Phaser.Game({
+      width: 1280,
+      height: 768,
+      renderer: Phaser.AUTO,
+      parent: document.getElementById('game'),
+      enableDebug: window.DEBUG
+  });
+  //game.debug = { preUpdate: function() {} };
 
   // add game states
   game.state.add('Boot', PhaserPong.Boot);

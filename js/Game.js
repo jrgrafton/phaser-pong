@@ -10,8 +10,6 @@ PhaserPong.Game = function(game){
 
   // Game over at this score
   this.MAX_SCORE = 10;
-
-  // 
 };
 PhaserPong.Game.prototype = {
   create: function(){
@@ -29,6 +27,16 @@ PhaserPong.Game.prototype = {
     this.sfx["ping"] = this.game.add.audio('ping');
     this.sfx["pong"] = this.game.add.audio('pong');
     this.sfx["point"] = this.game.add.audio('point');
+
+
+    if(window.DEBUG) {
+      // for fps measuring
+      this.game.time.advancedTiming = true;
+      // override the original render() method 
+      this.game.state.onRenderCallback = function() {
+        this.game.debug.text('fps: '+ this.game.time.fps, 32, 20);
+      }
+    }
   },
   addSprites_: function() {
     // Add all sprites
@@ -160,9 +168,9 @@ PhaserPong.Game.prototype = {
     diffComponent = (diffComponent > 1)? 0.8 : diffComponent;
     diffComponent = (diffComponent < -1)? -0.8 : diffComponent;
     diffComponent =
-        (diffComponent > 0 && diffComponent < 0.1)? 0.15 : diffComponent;
+        (diffComponent > 0 && diffComponent < 0.25)? 0.25 : diffComponent;
     diffComponent =
-        (diffComponent < 0 && diffComponent > -0.1)? -0.15 : diffComponent;
+        (diffComponent < 0 && diffComponent > -0.25)? -0.25 : diffComponent;
 
     // Final y velocity
     var finalYVelocity = ballTotalVelocity * diffComponent;
@@ -171,32 +179,9 @@ PhaserPong.Game.prototype = {
     // Adjust XVelocity back to original direction
     finalXVelocity *= (ball.body.velocity.x < 1)? -1 : 1;
 
-
-    console.log(ball.body.velocity.x + " " + ball.body.velocity.y);
-    console.log(finalXVelocity + " " + finalYVelocity);
-
     // Apply adjusted velocities
     ball.body.velocity.x = finalXVelocity;
     ball.body.velocity.y = finalYVelocity;
-
-
-    /* if (ball.y < bat.y) {
-        //  Ball is on the top-hand side of the paddle
-        diff = bat.body.y - ball.body.y;
-        diffComponent = diff / diffMax;
-
-        ball.body.velocity.y = (-10 * diff);
-    }
-    else if (ball.x > bat.x) {
-        //  Ball is on the bottom-hand side of the paddle
-        diff = ball.body.y - bat.body.y;
-        diffComponent = diff / diffMax;
-
-        ball.body.velocity.y = (10 * diff);
-    }
-    else {
-        //  Ball is perfectly in the middle - continue current heading
-    }*/
 
     // Play SFX
     (ball.x < this.world.width / 2)?
