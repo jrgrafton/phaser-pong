@@ -45,8 +45,15 @@ PhaserPong.GameOver.prototype = {
     });
 
     this.add.sprite(0, 0, 'scanlines');
+
+    // Music
+    this.music = this.game.add.audio('intro');
+    this.music.play('',0,1,true);
   },
   startGame: function() {
+    // Stop music
+    this.music.stop();
+
     // start the Game state
     this.state.start('Game');
   }

@@ -6,6 +6,9 @@ PhaserPong.MainMenu.prototype = {
         this.game.world.centerX - cacheLogo.width / 2,
         this.game.height / 4, 'logo');
 
+    spriteLogo.alpha = 0;
+    this.game.add.tween(spriteLogo).to( { alpha: 1 }, 500, Phaser.Easing.Linear.None, true);
+
     // +20 to compensate for outer glow
     var textReady = this.game.add.bitmapText(this.game.world.centerX,
           spriteLogo.y + spriteLogo.height * 1.25,
@@ -34,8 +37,15 @@ PhaserPong.MainMenu.prototype = {
     });
 
     this.add.sprite(0, 0, 'scanlines');
+
+    // Music
+    this.music = this.game.add.audio('intro');
+    this.music.play('',0,1,true);
   },
   startGame: function() {
+    // Stop music
+    this.music.stop();
+
     // start the Game state
     this.state.start('Game');
   }

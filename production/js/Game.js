@@ -8,15 +8,27 @@ PhaserPong.Game = function(game){
   this.ball_ = null;
   this.pauseOverlay_ = null;
 
+  // Game over at this score
   this.MAX_SCORE = 10;
+
+  // 
 };
 PhaserPong.Game.prototype = {
   create: function(){
     this.addSprites_();
     this.enablePhysics_();
 
+    // Pause handlers
     this.game.onPause.add(this.managePause_, this);
     this.game.onResume.add(this.manageResume_, this);
+
+    // Sounds
+    this.music = this.game.add.audio('in-game');
+    this.music.play('',0,1,true);
+    this.sfx = {};
+    this.sfx["ping"] = this.game.add.audio('ping');
+    this.sfx["pong"] = this.game.add.audio('pong');
+    this.sfx["point"] = this.game.add.audio('point');
   },
   addSprites_: function() {
     // Add all sprites
@@ -121,10 +133,10 @@ PhaserPong.Game.prototype = {
 
     // Track ball
     if(computerCenterY < this.ball_.y) {
-      this.computer_.y += 6 + Math.random() * 7;
+      this.computer_.y += 6 + Math.random() * 10;
     }
     else {
-      this.computer_.y -= 6 + Math.random() * 7;
+      this.computer_.y -= 6 + Math.random() * 10;
     }
 
     // Keep AI from going off the screen
@@ -151,6 +163,10 @@ PhaserPong.Game.prototype = {
         //  Ball is perfectly in the middle - do nothing
     }
 
+    // Play SFX
+    (ball.x < this.world.width / 2)?
+        this.sfx["ping"].play() : this.sfx["pong"].play()
+
     // Speed up
     ball.body.velocity.y *= 1.3;
     ball.body.velocity.x *= 1.3;
@@ -168,6 +184,9 @@ PhaserPong.Game.prototype = {
       newScore = parseInt(this.playerScore_.text) + 1;
       this.playerScore_.text = "" + newScore;
     }
+
+    // Play SFX
+    this.sfx["point"].play();
 
     // Reset or game over
     (newScore >= this.MAX_SCORE)? this.gameOver_() : this.reset_();
@@ -189,6 +208,9 @@ PhaserPong.Game.prototype = {
       player: this.playerScore_.text,
       computer: this.computerScore_.text
     };
+    // Stop music
+    this.music.stop();
+
     this.state.start('GameOver');
   }
 };

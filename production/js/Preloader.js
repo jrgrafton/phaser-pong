@@ -8,14 +8,12 @@ PhaserPong.Preloader.prototype = {
     // set background color and preload image
     this.stage.backgroundColor = '#000';
 
-    // Add preloader assets
+    // Terrible hack - for spacing only
     var cacheLogo = this.game.cache.getImage('logo');
     var spriteLogo = this.add.sprite(
         this.game.world.centerX - cacheLogo.width / 2,
         this.game.height / 4, 'logo');
-
     spriteLogo.alpha = 0;
-    this.game.add.tween(spriteLogo).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, false, 0, 1000, false);
 
     // +20 to compensate for outer glow
     var textLoading = this.game.add.bitmapText(spriteLogo.x + 20,
@@ -50,6 +48,13 @@ PhaserPong.Preloader.prototype = {
     // load fonts
     this.load.bitmapFont('kindly-rewind-glow', 'fonts/kindly-rewind-glow.png',
         'fonts/kindly-rewind-glow.xml');
+
+    // Load audio
+    this.game.load.audio('intro', ['sounds/intro.mp3', 'sounds/intro.ogg']);
+    this.game.load.audio('in-game', ['sounds/in-game.mp3', 'sounds/in-game.ogg']);
+    this.game.load.audio('ping', ['sounds/ping.mp3', 'sounds/ping.ogg']);
+    this.game.load.audio('pong', ['sounds/pong.mp3', 'sounds/pong.ogg']);
+    this.game.load.audio('point', ['sounds/point.mp3', 'sounds/point.ogg']);
   },
   onFileComplete_ : function(progress) {
     this.spriteLoadingBar.crop(new Phaser.Rectangle(
