@@ -10,8 +10,6 @@ PhaserPong.Game = function(game){
 
   // Game over at this score
   this.MAX_SCORE = 10;
-
-  // 
 };
 PhaserPong.Game.prototype = {
   create: function(){
@@ -29,6 +27,16 @@ PhaserPong.Game.prototype = {
     this.sfx["ping"] = this.game.add.audio('ping');
     this.sfx["pong"] = this.game.add.audio('pong');
     this.sfx["point"] = this.game.add.audio('point');
+
+
+    if(window.DEBUG) {
+      // for fps measuring
+      this.game.time.advancedTiming = true;
+      // override the original render() method 
+      this.game.state.onRenderCallback = function() {
+        this.game.debug.text('fps: '+ this.game.time.fps, 32, 20);
+      }
+    }
   },
   addSprites_: function() {
     // Add all sprites
@@ -133,10 +141,10 @@ PhaserPong.Game.prototype = {
 
     // Track ball
     if(computerCenterY < this.ball_.y) {
-      this.computer_.y += 6 + Math.random() * 10;
+      this.computer_.y += 10 + Math.random() * 20;
     }
     else {
-      this.computer_.y -= 6 + Math.random() * 10;
+      this.computer_.y -= 10 + Math.random() * 20;
     }
 
     // Keep AI from going off the screen
@@ -148,20 +156,32 @@ PhaserPong.Game.prototype = {
     }
   },
   ballHitBat_: function(ball, bat) {
-    var diff = 0;
-    if (ball.y < bat.y) {
-        //  Ball is on the top-hand side of the paddle
-        diff = bat.y - ball.y;
-        ball.body.velocity.y = (-10 * diff);
-    }
-    else if (ball.x > bat.x) {
-        //  Ball is on the bottom-hand side of the paddle
-        diff = ball.y -bat.y;
-        ball.body.velocity.y = (10 * diff);
-    }
-    else {
-        //  Ball is perfectly in the middle - do nothing
-    }
+    var ballTotalVelocity = Math.abs(ball.body.velocity.x)
+        + Math.abs(ball.body.velocity.y);
+
+    var diffMax = bat.body.height / 2;
+    var diff = (ball.body.y + ball.body.height / 2)
+        - (bat.body.y + bat.body.height / 2);
+    var diffComponent = diff / diffMax;
+
+    // Threshold max diff component
+    diffComponent = (diffComponent > 1)? 0.8 : diffComponent;
+    diffComponent = (diffComponent < -1)? -0.8 : diffComponent;
+    diffComponent =
+        (diffComponent > 0 && diffComponent < 0.25)? 0.25 : diffComponent;
+    diffComponent =
+        (diffComponent < 0 && diffComponent > -0.25)? -0.25 : diffComponent;
+
+    // Final y velocity
+    var finalYVelocity = ballTotalVelocity * diffComponent;
+    var finalXVelocity = ballTotalVelocity - Math.abs(finalYVelocity);
+
+    // Adjust XVelocity back to original direction
+    finalXVelocity *= (ball.body.velocity.x < 1)? -1 : 1;
+
+    // Apply adjusted velocities
+    ball.body.velocity.x = finalXVelocity;
+    ball.body.velocity.y = finalYVelocity;
 
     // Play SFX
     (ball.x < this.world.width / 2)?
