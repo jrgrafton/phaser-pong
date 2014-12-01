@@ -168,7 +168,7 @@ PhaserPong.Game.prototype = {
     diffComponent = (diffComponent > 0.7)? 0.7 : diffComponent;
     diffComponent = (diffComponent < -0.7)? -0.7 : diffComponent;
 
-    // Prevent from going to horizontal
+    // Prevent from going too horizontal
     diffComponent =
         (diffComponent > 0 && diffComponent < 0.2)? 0.2 : diffComponent;
     diffComponent =
