@@ -119,8 +119,9 @@ PhaserPong.Game.prototype = {
     // Move player
     this.player_.y = this.game.input.y - 20;
 
-    if(this.player_.y + this.player_.height > this.game.height) {
-      this.player_.y = this.game.height - this.player_.height;
+    // Not sure why player doesn't ever collid with bottom of world
+    if(this.player_.y + (this.player_.height - 18) > this.game.height) {
+      this.player_.y = this.game.height - (this.player_.height - 18);
     }
 
     // Collide ball and paddles
@@ -164,13 +165,15 @@ PhaserPong.Game.prototype = {
         - (bat.body.y + bat.body.height / 2);
     var diffComponent = diff / diffMax;
 
-    // Threshold max diff component
-    diffComponent = (diffComponent > 1)? 0.8 : diffComponent;
-    diffComponent = (diffComponent < -1)? -0.8 : diffComponent;
+    // Prevent from going too vertical
+    diffComponent = (diffComponent > 0.7)? 0.7 : diffComponent;
+    diffComponent = (diffComponent < -0.7)? -0.7 : diffComponent;
+
+    // Prevent from going too horizontal
     diffComponent =
-        (diffComponent > 0 && diffComponent < 0.25)? 0.25 : diffComponent;
+        (diffComponent > 0 && diffComponent < 0.2)? 0.2 : diffComponent;
     diffComponent =
-        (diffComponent < 0 && diffComponent > -0.25)? -0.25 : diffComponent;
+        (diffComponent < 0 && diffComponent > -0.2)? -0.2 : diffComponent;
 
     // Final y velocity
     var finalYVelocity = ballTotalVelocity * diffComponent;
