@@ -119,8 +119,9 @@ PhaserPong.Game.prototype = {
     // Move player
     this.player_.y = this.game.input.y - 20;
 
-    if(this.player_.y + this.player_.height > this.game.height) {
-      this.player_.y = this.game.height - this.player_.height;
+    // Not sure why player doesn't ever collid with bottom of world
+    if(this.player_.y + (this.player_.height - 18) > this.game.height) {
+      this.player_.y = this.game.height - (this.player_.height - 18);
     }
 
     // Collide ball and paddles
